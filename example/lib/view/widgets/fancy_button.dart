@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_libsodium_pt2_example/viewmodel/audio_controller.dart';
+import 'package:provider/provider.dart';
 
 class FancyButton extends StatefulWidget {
   const FancyButton({
@@ -75,6 +77,8 @@ class _FancyButtonState extends State<FancyButton>
 
   void _onTapDown(_) {
     if (widget.onPressed != null) {
+      context.read<AudioController>().playButton();
+
       _downTicker = _animationController!.animateTo(1.0);
     }
   }

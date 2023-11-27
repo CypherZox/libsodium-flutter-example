@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_libsodium_pt2_example/view/sign.dart';
 import 'package:flutter_libsodium_pt2_example/view/widgets/fancy_button.dart';
 import 'package:flutter_libsodium_pt2_example/view/widgets/shell.dart';
+import 'package:flutter_libsodium_pt2_example/viewmodel/audio_controller.dart';
 import 'package:flutter_libsodium_pt2_example/viewmodel/generate_vm.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +21,8 @@ class GenerateKeysWidget extends StatefulWidget {
 class _GenerateKeysWidgetState extends State<GenerateKeysWidget> {
   @override
   Widget build(BuildContext context) {
-    return AppShell(child:
-        Consumer<GenerateViewModel>(builder: (context, generateViewModel, _) {
+    return AppShell(child: Consumer2<GenerateViewModel, AudioController>(
+        builder: (context, generateViewModel, audioController, _) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,6 +105,7 @@ class _GenerateKeysWidgetState extends State<GenerateKeysWidget> {
                                   await Clipboard.setData(ClipboardData(
                                       text: generateViewModel
                                           .base64DecodedPublicKey));
+                                  audioController.playCopy();
                                 },
                                 icon: const Icon(
                                   Icons.copy_rounded,
@@ -176,6 +178,7 @@ class _GenerateKeysWidgetState extends State<GenerateKeysWidget> {
                                   await Clipboard.setData(ClipboardData(
                                       text: generateViewModel
                                           .base64DecodedSecretKey));
+                                  audioController.playCopy();
                                 },
                                 icon: const Icon(
                                   Icons.copy_rounded,

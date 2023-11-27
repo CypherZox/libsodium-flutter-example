@@ -7,6 +7,7 @@ import 'package:flutter_libsodium_pt2_example/view/widgets/confetti.dart';
 import 'package:flutter_libsodium_pt2_example/view/widgets/fancy_button.dart';
 import 'package:flutter_libsodium_pt2_example/view/widgets/shell.dart';
 import 'package:flutter_libsodium_pt2_example/view/widgets/text_field.dart';
+import 'package:flutter_libsodium_pt2_example/viewmodel/audio_controller.dart';
 import 'package:flutter_libsodium_pt2_example/viewmodel/generate_vm.dart';
 import 'package:flutter_libsodium_pt2_example/viewmodel/sign_vm.dart';
 import 'package:flutter_libsodium_pt2_example/viewmodel/veify_vm.dart';
@@ -37,8 +38,8 @@ class _VerifyWidgetState extends State<VerifyWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return AppShell(child:
-        Consumer<VerifyViewModel>(builder: (context, verifyViewModel, _) {
+    return AppShell(child: Consumer2<VerifyViewModel, AudioController>(
+        builder: (context, verifyViewModel, audioController, _) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,14 +90,22 @@ class _VerifyWidgetState extends State<VerifyWidget> {
             size: 18,
             color: const Color(0xffE8E8E8),
             onPressed: () async {
+              FocusScopeNode currentFocus = FocusScope.of(context);
+              if (!currentFocus.hasPrimaryFocus) {
+                currentFocus.unfocus();
+              }
               final signResult = await verifyViewModel.verifyMessage(
                   verifyViewModel.publicKeyController.text.replaceAll(' ', ''),
                   verifyViewModel.signatureController.text.replaceAll(' ', ''),
                   verifyViewModel.messageController.text.replaceAll(' ', ''));
+
               if (signResult == 0) {
                 confettiController.play();
+                audioController.playApproved();
                 Future.delayed(Duration(milliseconds: 300))
                     .then((value) => confettiController.stop());
+              } else {
+                audioController.playFail();
               }
             },
             child: Row(

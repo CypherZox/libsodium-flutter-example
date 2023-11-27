@@ -7,6 +7,7 @@ import 'package:flutter_libsodium_pt2_example/view/verify.dart';
 import 'package:flutter_libsodium_pt2_example/view/widgets/fancy_button.dart';
 import 'package:flutter_libsodium_pt2_example/view/widgets/shell.dart';
 import 'package:flutter_libsodium_pt2_example/view/widgets/text_field.dart';
+import 'package:flutter_libsodium_pt2_example/viewmodel/audio_controller.dart';
 import 'package:flutter_libsodium_pt2_example/viewmodel/generate_vm.dart';
 import 'package:flutter_libsodium_pt2_example/viewmodel/sign_vm.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,8 +23,9 @@ class SignWidget extends StatefulWidget {
 class _SignWidgetState extends State<SignWidget> {
   @override
   Widget build(BuildContext context) {
-    return AppShell(child: Consumer2<SignViewModel, GenerateViewModel>(
-        builder: (context, signViewModel, generateViewModel, _) {
+    return AppShell(child:
+        Consumer3<SignViewModel, GenerateViewModel, AudioController>(builder:
+            (context, signViewModel, generateViewModel, audioController, _) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,6 +55,10 @@ class _SignWidgetState extends State<SignWidget> {
               await signViewModel.signMessage(
                   generateViewModel.keyPair!.secretKey,
                   signViewModel.messageController.text);
+              FocusScopeNode currentFocus = FocusScope.of(context);
+              if (!currentFocus.hasPrimaryFocus) {
+                currentFocus.unfocus();
+              }
               setState(() {});
             },
             child: Row(
@@ -93,6 +99,7 @@ class _SignWidgetState extends State<SignWidget> {
                       onPressed: () async {
                         await Clipboard.setData(ClipboardData(
                             text: signViewModel.signatureBase64 ?? ''));
+                        audioController.playCopy();
                       },
                       icon: const Icon(
                         Icons.copy_rounded,
